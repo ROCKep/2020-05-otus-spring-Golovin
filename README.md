@@ -1,2 +1,3 @@
-# 2020-05-otus-spring-Golovin
-ДЗ по курсу Разработчик на Spring Framework в OTUS
+Головин Игорь
+Разработчик на Spring Framework
+2020-05
