@@ -36,7 +36,6 @@ public class CsvUtils {
         public CsvUtilsException(String message) {
             super(message);
         }
-
         public CsvUtilsException(String message, Throwable cause) {
             super(message, cause);
         }
