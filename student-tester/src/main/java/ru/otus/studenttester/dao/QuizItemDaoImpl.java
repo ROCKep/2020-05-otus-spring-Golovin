@@ -1,18 +1,20 @@
 package ru.otus.studenttester.dao;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Repository;
 import ru.otus.studenttester.domain.QuizItem;
 import ru.otus.studenttester.utils.CsvUtils;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+@Repository
 public class QuizItemDaoImpl implements QuizItemDao {
 
     private final String filename;
     private final CsvUtils csvUtils;
 
-    public QuizItemDaoImpl(String filename, CsvUtils csvUtils) {
+    public QuizItemDaoImpl(@Value("${path.to.file}") String filename, CsvUtils csvUtils) {
         this.filename = filename;
         this.csvUtils = csvUtils;
     }
