@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @ExtendWith(MockitoExtension.class)
 class QuizItemDaoImplTest {
     @Mock
-    CsvUtils csvUtils;
+    private CsvUtils csvUtils;
 
     @Test
     public void testListQuizItems() {
