@@ -3,6 +3,8 @@ package ru.otus.studenttester.utils;
 import com.opencsv.CSVReader;
 import com.opencsv.CSVReaderHeaderAware;
 import com.opencsv.exceptions.CsvValidationException;
+import org.springframework.stereotype.Component;
+import ru.otus.studenttester.exception.CsvUtilsException;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -11,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
+@Component
 public class CsvUtils {
 
     public <T> List<T> readCsv(String filename, Function<String[], T> mapper) {
@@ -32,12 +35,4 @@ public class CsvUtils {
         }
     }
 
-    public static class CsvUtilsException extends RuntimeException {
-        public CsvUtilsException(String message) {
-            super(message);
-        }
-        public CsvUtilsException(String message, Throwable cause) {
-            super(message, cause);
-        }
-    }
 }
