@@ -1,7 +1,6 @@
 package ru.otus.studenttester.runner;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 import ru.otus.studenttester.dao.QuizItemDao;
 import ru.otus.studenttester.domain.QuizItem;
