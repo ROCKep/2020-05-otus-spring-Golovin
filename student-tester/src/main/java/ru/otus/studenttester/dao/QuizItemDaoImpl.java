@@ -14,11 +14,12 @@ public class QuizItemDaoImpl implements QuizItemDao {
     private final String filename;
     private final CsvUtils csvUtils;
 
-    public QuizItemDaoImpl(@Value("${path.to.file}") String filename, CsvUtils csvUtils) {
+    public QuizItemDaoImpl(@Value("${app.path-to-file}") String filename, CsvUtils csvUtils) {
         this.filename = filename;
         this.csvUtils = csvUtils;
     }
 
+    @Override
     public List<QuizItem> listQuizItems() {
         return csvUtils.readCsv(filename, line -> {
             String question = line[0];
