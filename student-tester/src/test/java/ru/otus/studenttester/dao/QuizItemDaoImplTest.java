@@ -1,33 +1,35 @@
 package ru.otus.studenttester.dao;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
 import ru.otus.studenttester.domain.QuizItem;
-import ru.otus.studenttester.utils.CsvUtils;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+@SpringBootTest
+public class QuizItemDaoImplTest {
 
-@ExtendWith(MockitoExtension.class)
-class QuizItemDaoImplTest {
-    @Mock
-    private CsvUtils csvUtils;
+    @Configuration
+    @ComponentScan({"ru.otus.studenttester.dao", "ru.otus.studenttester.utils"})
+    static class TestConfig {
+
+    }
+
+    @Autowired
+    private QuizItemDao dao;
 
     @Test
     public void testListQuizItems() {
-        QuizItem testQuizItem = new QuizItem("Question?", Arrays.asList("Answer1", "Answer2"), (short) 1);
-        Mockito.doReturn(Collections.singletonList(testQuizItem))
-                .when(csvUtils).readCsv(Mockito.any(), Mockito.any());
-        QuizItemDao instance = new QuizItemDaoImpl("ignored", csvUtils);
-        List<QuizItem> result = instance.listQuizItems();
-        assertAll(
-                () -> assertNotNull(result),
-                () -> assertEquals(result.size(), 1));
+        List<QuizItem> expected = Arrays.asList(
+                new QuizItem("Question 1?", Arrays.asList("Answer 10", "Answer 11", "Answer 12"), 0),
+                new QuizItem("Question 2?", Arrays.asList("Answer 20", "Answer 21", "Answer 22"), 1)
+        );
+        List<QuizItem> actual = dao.listQuizItems();
+        Assertions.assertIterableEquals(expected, actual);
     }
 }

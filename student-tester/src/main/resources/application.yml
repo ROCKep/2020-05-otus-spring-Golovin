@@ -1,0 +1,9 @@
+app:
+  path-to-file: /quiz-items_ru.csv
+  min-correct-answers: 3
+  locale: ru_RU
+
+spring:
+  messages:
+    basename: i18n.bundle
+    encoding: UTF-8

@@ -15,7 +15,7 @@ public class ScanServiceImpl implements ScanService {
         return scanner.nextLine();
     }
 
-    public short scanShort() {
-        return scanner.nextShort();
+    public int scanInt() {
+        return scanner.nextInt();
     }
 }
