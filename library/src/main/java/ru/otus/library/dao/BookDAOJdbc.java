@@ -17,6 +17,7 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class BookDAOJdbc implements BookDAO {
@@ -73,17 +74,20 @@ public class BookDAOJdbc implements BookDAO {
         SqlParameterSource params = new MapSqlParameterSource()
                 .addValue("name", book.getName())
                 .addValue("release_year", book.getReleaseYear())
-                .addValue("author_id", book.getAuthor().getId());
+                .addValue("author_id", Optional.ofNullable(book.getAuthor()).map(Author::getId).orElse(null));
         jdbc.update("insert into books (name, release_year, author_id) values (:name, :release_year, :author_id)", params, keyHolder);
         long id = keyHolder.getKey().longValue();
         book.setId(id);
 
         MapSqlParameterSource[] paramsArr = book.getGenres().stream()
+                .filter(genre -> genre.getId() != null)
                 .map(genre -> new MapSqlParameterSource()
                         .addValue("genre_id", genre.getId())
                         .addValue("book_id", id))
                 .toArray(MapSqlParameterSource[]::new);
-        jdbc.batchUpdate("insert into genres_books (genre_id, book_id) values (:genre_id, :book_id)", paramsArr);
+        if (paramsArr.length > 0) {
+            jdbc.batchUpdate("insert into genres_books (genre_id, book_id) values (:genre_id, :book_id)", paramsArr);
+        }
 
         return book;
     }
@@ -91,7 +95,6 @@ public class BookDAOJdbc implements BookDAO {
     @Override
     public boolean delete(long id) {
         SqlParameterSource params = new MapSqlParameterSource("id", id);
-        jdbc.update("delete from genres_books where book_id = :id", params);
         return jdbc.update("delete from books where id = :id", params) > 0;
     }
 

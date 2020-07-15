@@ -19,7 +19,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class BookDAOJdbcTest {
 
     @Autowired
-    BookDAOJdbc bookDAO;
+    private BookDAOJdbc bookDAO;
 
     @Test
     void testGetAll() {
@@ -55,13 +55,11 @@ class BookDAOJdbcTest {
         Book bookToAdd = new Book("new test book", 1965, genres, author);
         bookToAdd = bookDAO.add(bookToAdd);
         Book addedBook = bookDAO.getById(bookToAdd.getId());
-        assertThat(addedBook)
-                .hasFieldOrPropertyWithValue("id", 3L)
-                .hasFieldOrPropertyWithValue("name", "new test book")
-                .hasFieldOrPropertyWithValue("releaseYear", 1965);
+        assertThat(addedBook).isEqualToIgnoringGivenFields(bookToAdd, "author", "genres");
         assertThat(addedBook.getAuthor()).hasFieldOrPropertyWithValue("id", 1L);
-        assertThat(addedBook.getGenres()).hasSize(1);
-        assertThat(addedBook.getGenres().get(0)).hasFieldOrPropertyWithValue("id", 1L);
+        assertThat(addedBook.getGenres())
+                .usingElementComparatorIgnoringFields("name")
+                .containsExactlyInAnyOrderElementsOf(bookToAdd.getGenres());
     }
 
     @Test

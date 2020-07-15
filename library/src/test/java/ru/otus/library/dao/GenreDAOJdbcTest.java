@@ -16,7 +16,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class GenreDAOJdbcTest {
 
     @Autowired
-    GenreDAOJdbc genreDAO;
+    private GenreDAOJdbc genreDAO;
 
     @Test
     void getByNames() {
