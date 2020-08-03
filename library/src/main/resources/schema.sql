@@ -24,3 +24,11 @@ create table genres_books (
     foreign key (genre_id) references genres(id) on delete cascade,
     foreign key (book_id) references  books(id) on delete cascade
 );
+
+create table comments (
+    id identity primary key,
+    content varchar(1000) not null,
+    user varchar(255) not null,
+    book_id bigint not null,
+    foreign key (book_id) references books(id) on delete cascade
+);

@@ -1,8 +1,8 @@
-package ru.otus.library.dao;
+package ru.otus.library.repository;
 
 import ru.otus.library.domain.Author;
 
-public interface AuthorDAO {
+public interface AuthorRepository {
 
     Author getByName(String name);
 
