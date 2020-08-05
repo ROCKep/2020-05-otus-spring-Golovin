@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
-import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.ComponentScan;
 import ru.otus.library.domain.Author;
 import ru.otus.library.domain.Book;
 import ru.otus.library.domain.Genre;
@@ -17,17 +17,17 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 @DataJpaTest
-@Import(BookRepositoryJpa.class)
-class BookRepositoryJpaTest {
+@ComponentScan(basePackages = "ru.otus.library.repository")
+class BookRepositoryTest {
 
     @Autowired
-    private BookRepositoryJpa bookRepo;
+    private BookRepository bookRepo;
     @Autowired
     private TestEntityManager em;
 
     @Test
     void testGetAll() {
-        List<Book> books = bookRepo.getAll();
+        List<Book> books = bookRepo.findAll();
         assertThat(books).hasSize(2);
         assertThat(books.get(0))
                 .hasFieldOrPropertyWithValue("id", 1L)
@@ -36,8 +36,8 @@ class BookRepositoryJpaTest {
     }
 
     @Test
-    void testGetById() {
-        Book book = bookRepo.getById(2L);
+    void testGetByIdWithDetails() {
+        Book book = bookRepo.getByIdWithDetails(2L);
         assertThat(book)
                 .hasFieldOrPropertyWithValue("id", 2L)
                 .hasFieldOrPropertyWithValue("name", "test book 2")
@@ -53,8 +53,8 @@ class BookRepositoryJpaTest {
     }
 
     @Test
-    public void testGetByIdNoDetails() {
-        Book book = bookRepo.getByIdNoDetails(2L);
+    public void testGetById() {
+        Book book = bookRepo.getById(2L);
         assertThat(book)
                 .hasFieldOrPropertyWithValue("id", 2L)
                 .hasFieldOrPropertyWithValue("name", "test book 2")
@@ -66,9 +66,10 @@ class BookRepositoryJpaTest {
         List<Genre> genres = Collections.singletonList(new Genre(1L, null));
         Author author = new Author(1L, null, null);
         Book bookToAdd = new Book("new test book", 1965, genres, author);
-        bookToAdd = bookRepo.add(bookToAdd);
+        bookToAdd = bookRepo.save(bookToAdd);
+        em.flush();
         em.detach(bookToAdd);
-        Book addedBook = bookRepo.getById(bookToAdd.getId());
+        Book addedBook = bookRepo.getByIdWithDetails(bookToAdd.getId());
         assertThat(addedBook).isEqualToIgnoringGivenFields(bookToAdd, "author", "genres");
         assertThat(addedBook.getAuthor()).hasFieldOrPropertyWithValue("id", 1L);
         assertThat(addedBook.getGenres())
@@ -78,7 +79,7 @@ class BookRepositoryJpaTest {
 
     @Test
     void testDelete() {
-        bookRepo.delete(1L);
+        bookRepo.removeById(1L);
         em.flush();
         Book book = em.find(Book.class, 1L);
         assertNull(book);

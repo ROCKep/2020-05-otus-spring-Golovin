@@ -26,7 +26,7 @@ public class BookServiceImpl implements BookService {
     @Transactional(readOnly = true)
     public void listAllBooks() {
         ioService.outputLine("Listing all books:");
-        List<Book> books = bookRepo.getAll();
+        List<Book> books = bookRepo.findAll();
         books.forEach(book ->
                 ioService.outputLine(book.shortString()));
     }
@@ -35,7 +35,7 @@ public class BookServiceImpl implements BookService {
     @Transactional(readOnly = true)
     public void getBookDetails(long id) {
         ioService.outputLine("Book details:");
-        Book book = bookRepo.getById(id);
+        Book book = bookRepo.getByIdWithDetails(id);
         ioService.outputLine(book.longString());
     }
 
@@ -51,9 +51,9 @@ public class BookServiceImpl implements BookService {
         ioService.output("input genre names: ");
         String genreNames = ioService.inputLine();
         Author author = authorRepo.getByName(authorName);
-        List<Genre> genres = genreRepo.getByNames(Arrays.asList(genreNames.split(", ")));
+        List<Genre> genres = genreRepo.getByNameIn(Arrays.asList(genreNames.split(", ")));
         Book book = new Book(name, releaseYear, genres, author);
-        book = bookRepo.add(book);
+        book = bookRepo.save(book);
         ioService.outputLine("inserted book");
         ioService.outputLine(book.longString());
     }
@@ -61,7 +61,7 @@ public class BookServiceImpl implements BookService {
     @Override
     @Transactional
     public void deleteBook(long id) {
-        boolean deleted = bookRepo.delete(id);
+        boolean deleted = bookRepo.removeById(id) > 0;
         if (deleted) {
             ioService.outputLine(String.format("deleted book with id %s", id));
         }

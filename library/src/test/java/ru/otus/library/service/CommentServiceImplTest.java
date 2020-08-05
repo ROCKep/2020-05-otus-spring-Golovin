@@ -50,7 +50,7 @@ public class CommentServiceImplTest {
         doReturn(comment.getUser(), comment.getContent())
                 .when(ioService).inputLine();
         Book book = new Book(1L, "test book", null);
-        doReturn(book).when(bookRepo).getByIdNoDetails(anyLong());
+        doReturn(book).when(bookRepo).getById(anyLong());
         doReturn(comment).when(commentRepo).save(any(Comment.class));
         commentService.addComment(1L);
         ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
@@ -67,7 +67,7 @@ public class CommentServiceImplTest {
         doReturn(newComment.getUser(), newComment.getContent())
                 .when(ioService).inputLine();
         doReturn(oldComment).when(commentRepo).getById(anyLong());
-        doReturn(newComment).when(commentRepo).update(any(Comment.class));
+        doReturn(newComment).when(commentRepo).save(any(Comment.class));
         commentService.editComment(1L);
         ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
         verify(ioService, times(2)).outputLine(captor.capture());
@@ -78,7 +78,7 @@ public class CommentServiceImplTest {
 
     @Test
     void testDeleteComment() {
-        doReturn(true).when(commentRepo).delete(anyLong());
+        doReturn(1).when(commentRepo).removeById(anyLong());
         commentService.deleteComment(1L);
         ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
         verify(ioService).outputLine(captor.capture());

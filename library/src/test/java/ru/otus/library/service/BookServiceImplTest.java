@@ -41,7 +41,7 @@ public class BookServiceImplTest {
         List<Book> books = Arrays.asList(
                 new Book(-1L, "test book 1", 1945),
                 new Book(-2L, "test book 2", 1950));
-        doReturn(books).when(bookRepo).getAll();
+        doReturn(books).when(bookRepo).findAll();
         service.listAllBooks();
         ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
         verify(ioService, times(3)).outputLine(captor.capture());
@@ -56,7 +56,7 @@ public class BookServiceImplTest {
         List<Genre> genres = Collections.singletonList(new Genre(-1L, "test genre"));
         Author author = new Author(-1L, "test author", null);
         Book book = new Book(-1L, "test book", 1945, genres, author);
-        doReturn(book).when(bookRepo).getById(anyLong());
+        doReturn(book).when(bookRepo).getByIdWithDetails(anyLong());
         service.getBookDetails(-1L);
         ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
         verify(ioService, times(2)).outputLine(captor.capture());
@@ -78,9 +78,9 @@ public class BookServiceImplTest {
         doReturn(author)
                 .when(authorRepo).getByName(anyString());
         doReturn(genres)
-                .when(genreRepo).getByNames(anyList());
+                .when(genreRepo).getByNameIn(anyList());
 
-        doReturn(book).when(bookRepo).add(any(Book.class));
+        doReturn(book).when(bookRepo).save(any(Book.class));
         service.addNewBook();
         ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
         verify(ioService, times(2)).outputLine(captor.capture());
@@ -91,7 +91,7 @@ public class BookServiceImplTest {
 
     @Test
     void testDeleteBook() {
-        doReturn(true).when(bookRepo).delete(anyLong());
+        doReturn(1).when(bookRepo).removeById(anyLong());
         service.deleteBook(-1L);
         ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
         verify(ioService).outputLine(captor.capture());

@@ -32,7 +32,7 @@ public class CommentServiceImpl implements CommentService {
     @Override
     @Transactional
     public void addComment(long bookId) {
-        Book book = bookRepo.getByIdNoDetails(bookId);
+        Book book = bookRepo.getById(bookId);
         ioService.output("input user: ");
         String user = ioService.inputLine();
         ioService.output("input content: ");
@@ -54,7 +54,7 @@ public class CommentServiceImpl implements CommentService {
         String content = ioService.inputLine();
         comment.setUser(user);
         comment.setContent(content);
-        comment = commentRepo.update(comment);
+        comment = commentRepo.save(comment);
         ioService.outputLine("updated comment");
         ioService.outputLine(comment.getStringForShow());
     }
@@ -62,7 +62,7 @@ public class CommentServiceImpl implements CommentService {
     @Override
     @Transactional
     public void deleteComment(long commentId) {
-        boolean deleted = commentRepo.delete(commentId);
+        boolean deleted = commentRepo.removeById(commentId) > 0;
         if (deleted) {
             ioService.outputLine(String.format("deleted comment with id %s", commentId));
         }

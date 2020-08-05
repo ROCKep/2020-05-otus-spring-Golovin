@@ -11,8 +11,6 @@ import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "books")
-@NamedEntityGraph(name = "authors-entity-graph",
-        attributeNodes = @NamedAttributeNode("author"))
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
