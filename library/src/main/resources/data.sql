@@ -20,3 +20,11 @@ insert into genres_books (genre_id, book_id)
        or g.name = 'Классика' and b.name = '1984'
        or g.name = 'Фэнтези' and b.name = 'Гарри Поттер и философский камень'
        or g.name = 'Классика' and b.name = 'Мастер и Маргарита';
+
+insert into comments (content, user, book_id)
+    select c.content, c.user, b.id
+    from (
+        select 'Крутая книга)' content, 'turboVasyan123' user, 'Мастер и Маргарита' book_name union all
+        select 'Не очень(', 'coolDude2000', 'Мастер и Маргарита' union all
+        select 'Пойдет', 'proGamerMLG360', '1984') c
+    join books b on c.book_name = b.name;

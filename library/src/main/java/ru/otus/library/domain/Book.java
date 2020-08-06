@@ -2,18 +2,36 @@ package ru.otus.library.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
 
+import javax.persistence.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Entity
+@Table(name = "books")
+@NamedEntityGraph(name = "authors-entity-graph",
+        attributeNodes = @NamedAttributeNode("author"))
 @Data
+@NoArgsConstructor
 @AllArgsConstructor
 public class Book {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private final String name;
-    private final Integer releaseYear;
+
+    @Column(name = "name")
+    private String name;
+
+    @Column(name = "release_year")
+    private Integer releaseYear;
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "genres_books", joinColumns = @JoinColumn(name = "book_id"), inverseJoinColumns = @JoinColumn(name = "genre_id"))
     private List<Genre> genres;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     private Author author;
 
     public Book(long id, @NonNull String name, Integer releaseYear) {

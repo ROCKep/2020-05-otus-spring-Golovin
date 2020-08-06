@@ -1,8 +1,8 @@
-package ru.otus.library.dao;
+package ru.otus.library.repository;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 import ru.otus.library.domain.Author;
 
@@ -10,17 +10,17 @@ import java.time.LocalDate;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@JdbcTest
-@Import({AuthorDAOJdbc.class})
-class AuthorDAOJdbcTest {
+@DataJpaTest
+@Import({AuthorRepositoryJpa.class})
+class AuthorRepositoryJpaTest {
 
     @Autowired
-    private AuthorDAOJdbc authorDAO;
+    private AuthorRepositoryJpa authorRepo;
 
     @Test
     void testGetByName() {
         String authorName = "test author";
-        Author author = authorDAO.getByName(authorName);
+        Author author = authorRepo.getByName(authorName);
         assertThat(author)
                 .hasFieldOrPropertyWithValue("id", 1L)
                 .hasFieldOrPropertyWithValue("name", authorName)

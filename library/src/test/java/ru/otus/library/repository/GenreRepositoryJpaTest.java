@@ -1,8 +1,8 @@
-package ru.otus.library.dao;
+package ru.otus.library.repository;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 import ru.otus.library.domain.Genre;
 
@@ -11,17 +11,17 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@JdbcTest
-@Import(GenreDAOJdbc.class)
-class GenreDAOJdbcTest {
+@DataJpaTest
+@Import(GenreRepositoryJpa.class)
+class GenreRepositoryJpaTest {
 
     @Autowired
-    private GenreDAOJdbc genreDAO;
+    private GenreRepositoryJpa genreRepo;
 
     @Test
     void getByNames() {
         List<String> names = Arrays.asList("test genre 1", "test genre 2");
-        List<Genre> genres = genreDAO.getByNames(names);
+        List<Genre> genres = genreRepo.getByNames(names);
         assertThat(genres).hasSize(2);
         assertThat(genres.get(0))
                 .hasFieldOrPropertyWithValue("id", 1L)

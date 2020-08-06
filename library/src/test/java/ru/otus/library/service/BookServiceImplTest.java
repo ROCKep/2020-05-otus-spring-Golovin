@@ -6,12 +6,12 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import ru.otus.library.dao.AuthorDAO;
-import ru.otus.library.dao.BookDAO;
-import ru.otus.library.dao.GenreDAO;
 import ru.otus.library.domain.Author;
 import ru.otus.library.domain.Book;
 import ru.otus.library.domain.Genre;
+import ru.otus.library.repository.AuthorRepository;
+import ru.otus.library.repository.BookRepository;
+import ru.otus.library.repository.GenreRepository;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -21,14 +21,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class BookServiceImplTest {
+public class BookServiceImplTest {
 
     @Mock
-    private BookDAO bookDAO;
+    private BookRepository bookRepo;
     @Mock
-    private AuthorDAO authorDAO;
+    private AuthorRepository authorRepo;
     @Mock
-    private GenreDAO genreDAO;
+    private GenreRepository genreRepo;
 
     @Mock
     private IOService ioService;
@@ -41,7 +41,7 @@ class BookServiceImplTest {
         List<Book> books = Arrays.asList(
                 new Book(-1L, "test book 1", 1945),
                 new Book(-2L, "test book 2", 1950));
-        doReturn(books).when(bookDAO).getAll();
+        doReturn(books).when(bookRepo).getAll();
         service.listAllBooks();
         ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
         verify(ioService, times(3)).outputLine(captor.capture());
@@ -56,7 +56,7 @@ class BookServiceImplTest {
         List<Genre> genres = Collections.singletonList(new Genre(-1L, "test genre"));
         Author author = new Author(-1L, "test author", null);
         Book book = new Book(-1L, "test book", 1945, genres, author);
-        doReturn(book).when(bookDAO).getById(anyLong());
+        doReturn(book).when(bookRepo).getById(anyLong());
         service.getBookDetails(-1L);
         ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
         verify(ioService, times(2)).outputLine(captor.capture());
@@ -76,11 +76,11 @@ class BookServiceImplTest {
         doReturn(book.getReleaseYear())
                 .when(ioService).inputInteger();
         doReturn(author)
-                .when(authorDAO).getByName(anyString());
+                .when(authorRepo).getByName(anyString());
         doReturn(genres)
-                .when(genreDAO).getByNames(anyList());
+                .when(genreRepo).getByNames(anyList());
 
-        doReturn(book).when(bookDAO).add(any(Book.class));
+        doReturn(book).when(bookRepo).add(any(Book.class));
         service.addNewBook();
         ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
         verify(ioService, times(2)).outputLine(captor.capture());
@@ -91,7 +91,7 @@ class BookServiceImplTest {
 
     @Test
     void testDeleteBook() {
-        doReturn(true).when(bookDAO).delete(anyLong());
+        doReturn(true).when(bookRepo).delete(anyLong());
         service.deleteBook(-1L);
         ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
         verify(ioService).outputLine(captor.capture());
