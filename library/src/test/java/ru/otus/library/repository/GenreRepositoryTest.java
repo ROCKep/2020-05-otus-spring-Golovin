@@ -19,7 +19,7 @@ class GenreRepositoryTest {
     private GenreRepository genreRepo;
 
     @Test
-    void getByNames() {
+    void getByNameIn() {
         List<String> names = Arrays.asList("test genre 1", "test genre 2");
         List<Genre> genres = genreRepo.getByNameIn(names);
         assertThat(genres).hasSize(2);

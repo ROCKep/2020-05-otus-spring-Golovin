@@ -55,7 +55,7 @@ public class CommentRepositoryTest {
     }
 
     @Test
-    void testUpdate() {
+    void testSave_update() {
         Comment commentToUpdate = em.find(Comment.class, 1L);
         commentToUpdate.setContent("test content 1 edited");
         commentToUpdate.setUser("test user 1 edited");
@@ -67,7 +67,7 @@ public class CommentRepositoryTest {
     }
 
     @Test
-    void testDelete() {
+    void testRemoveById() {
         commentRepo.removeById(1L);
         em.flush();
         Comment comment = em.find(Comment.class, 1L);

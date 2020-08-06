@@ -26,7 +26,7 @@ class BookRepositoryTest {
     private TestEntityManager em;
 
     @Test
-    void testGetAll() {
+    void testFindAll() {
         List<Book> books = bookRepo.findAll();
         assertThat(books).hasSize(2);
         assertThat(books.get(0))
@@ -62,7 +62,7 @@ class BookRepositoryTest {
     }
 
     @Test
-    void testAdd() {
+    void testSave() {
         List<Genre> genres = Collections.singletonList(new Genre(1L, null));
         Author author = new Author(1L, null, null);
         Book bookToAdd = new Book("new test book", 1965, genres, author);
@@ -78,7 +78,7 @@ class BookRepositoryTest {
     }
 
     @Test
-    void testDelete() {
+    void testRemoveById() {
         bookRepo.removeById(1L);
         em.flush();
         Book book = em.find(Book.class, 1L);
