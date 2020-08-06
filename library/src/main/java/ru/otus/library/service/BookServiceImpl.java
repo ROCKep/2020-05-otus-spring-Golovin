@@ -12,6 +12,7 @@ import ru.otus.library.repository.GenreRepository;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -28,7 +29,7 @@ public class BookServiceImpl implements BookService {
         ioService.outputLine("Listing all books:");
         List<Book> books = bookRepo.findAll();
         books.forEach(book ->
-                ioService.outputLine(book.shortString()));
+                ioService.outputLine(getBookShortString(book)));
     }
 
     @Override
@@ -36,7 +37,7 @@ public class BookServiceImpl implements BookService {
     public void getBookDetails(long id) {
         ioService.outputLine("Book details:");
         Book book = bookRepo.getByIdWithDetails(id);
-        ioService.outputLine(book.longString());
+        ioService.outputLine(getBookLongString(book));
     }
 
     @Override
@@ -55,7 +56,7 @@ public class BookServiceImpl implements BookService {
         Book book = new Book(name, releaseYear, genres, author);
         book = bookRepo.save(book);
         ioService.outputLine("inserted book");
-        ioService.outputLine(book.longString());
+        ioService.outputLine(getBookLongString(book));
     }
 
     @Override
@@ -65,5 +66,26 @@ public class BookServiceImpl implements BookService {
         if (deleted) {
             ioService.outputLine(String.format("deleted book with id %s", id));
         }
+    }
+
+    String getBookShortString(Book book) {
+        StringBuilder builder = new StringBuilder();
+        builder.append(String.format("%d. %s", book.getId(), book.getName()));
+        if (book.getReleaseYear() != null) {
+            builder.append(String.format(" (%d)", book.getReleaseYear()));
+        }
+        return builder.toString();
+    }
+
+    String getBookLongString(Book book) {
+        StringBuilder builder = new StringBuilder();
+        builder.append(String.format("%s%n", getBookShortString(book)));
+        builder.append(String.format("\tAuthor: %s%n", book.getAuthor().getName()));
+        if (!book.getGenres().isEmpty()) {
+            builder.append(String.format("\tGenres: %s",
+                    book.getGenres().stream()
+                            .map(Genre::getName).collect(Collectors.joining(", "))));
+        }
+        return builder.toString();
     }
 }

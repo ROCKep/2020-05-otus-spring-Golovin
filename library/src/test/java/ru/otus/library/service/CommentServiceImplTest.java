@@ -40,8 +40,8 @@ public class CommentServiceImplTest {
         verify(ioService, times(3)).outputLine(captor.capture());
         List<String> output = captor.getAllValues();
         assertEquals("comments for book \"test book\"", output.get(0));
-        assertEquals(comments.get(0).getStringForShow(), output.get(1));
-        assertEquals(comments.get(1).getStringForShow(), output.get(2));
+        assertEquals(commentService.getCommentStringForShow(comments.get(0)), output.get(1));
+        assertEquals(commentService.getCommentStringForShow(comments.get(1)), output.get(2));
     }
 
     @Test
@@ -57,7 +57,7 @@ public class CommentServiceImplTest {
         verify(ioService, times(2)).outputLine(captor.capture());
         List<String> output = captor.getAllValues();
         assertEquals("inserted comment", output.get(0));
-        assertEquals(comment.getStringForShow(), output.get(1));
+        assertEquals(commentService.getCommentStringForShow(comment), output.get(1));
     }
 
     @Test
@@ -73,7 +73,7 @@ public class CommentServiceImplTest {
         verify(ioService, times(2)).outputLine(captor.capture());
         List<String> output = captor.getAllValues();
         assertEquals("updated comment", output.get(0));
-        assertEquals(newComment.getStringForShow(), output.get(1));
+        assertEquals(commentService.getCommentStringForShow(newComment), output.get(1));
     }
 
     @Test
@@ -83,5 +83,12 @@ public class CommentServiceImplTest {
         ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
         verify(ioService).outputLine(captor.capture());
         assertEquals("deleted comment with id 1", captor.getValue());
+    }
+
+    @Test
+    public void testGetCommentStringForShow() {
+        Comment comment = new Comment("test content", "test user");
+        comment.setId(1L);
+        assertEquals(String.format("1. test user commented:%n\ttest content"), commentService.getCommentStringForShow(comment));
     }
 }

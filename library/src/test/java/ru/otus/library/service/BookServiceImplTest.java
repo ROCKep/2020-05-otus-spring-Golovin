@@ -47,8 +47,8 @@ public class BookServiceImplTest {
         verify(ioService, times(3)).outputLine(captor.capture());
         List<String> output = captor.getAllValues();
         assertEquals(output.get(0), "Listing all books:");
-        assertEquals(output.get(1), books.get(0).shortString());
-        assertEquals(output.get(2), books.get(1).shortString());
+        assertEquals(output.get(1), service.getBookShortString(books.get(0)));
+        assertEquals(output.get(2), service.getBookShortString(books.get(1)));
     }
 
     @Test
@@ -62,7 +62,7 @@ public class BookServiceImplTest {
         verify(ioService, times(2)).outputLine(captor.capture());
         List<String> output = captor.getAllValues();
         assertEquals(output.get(0), "Book details:");
-        assertEquals(output.get(1), book.longString());
+        assertEquals(output.get(1), service.getBookLongString(book));
     }
 
     @Test
@@ -86,7 +86,7 @@ public class BookServiceImplTest {
         verify(ioService, times(2)).outputLine(captor.capture());
         List<String> output = captor.getAllValues();
         assertEquals("inserted book", output.get(0));
-        assertEquals(book.longString(), output.get(1));
+        assertEquals(service.getBookLongString(book), output.get(1));
     }
 
     @Test
@@ -96,5 +96,26 @@ public class BookServiceImplTest {
         ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
         verify(ioService).outputLine(captor.capture());
         assertEquals("deleted book with id -1", captor.getValue());
+    }
+
+    @Test
+    void testGetBookShortString() {
+        String expected = "1. test book (1965)";
+        Book book = new Book(1, "test book", 1965);
+        assertEquals(expected, service.getBookShortString(book));
+    }
+
+    @Test
+    void testGetBookLongString() {
+        String expected = String.format("1. test book (1965)%n" +
+                "\tAuthor: test author%n" +
+                "\tGenres: test genre 1, test genre 2");
+        Author author = new Author(1L, "test author", null);
+        List<Genre> genres = Arrays.asList(
+                new Genre(1L, "test genre 1"),
+                new Genre(2L, "test genre 2")
+        );
+        Book book = new Book(1L, "test book", 1965, genres, author);
+        assertEquals(expected, service.getBookLongString(book));
     }
 }

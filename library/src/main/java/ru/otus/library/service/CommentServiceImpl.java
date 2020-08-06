@@ -25,7 +25,7 @@ public class CommentServiceImpl implements CommentService {
         if (comments.size() > 0) {
             ioService.outputLine(String.format("comments for book \"%s\"", comments.get(0).getBook().getName()));
             comments.forEach(comment ->
-                    ioService.outputLine(comment.getStringForShow()));
+                    ioService.outputLine(getCommentStringForShow(comment)));
         }
     }
 
@@ -41,7 +41,7 @@ public class CommentServiceImpl implements CommentService {
         comment.setBook(book);
         comment = commentRepo.save(comment);
         ioService.outputLine("inserted comment");
-        ioService.outputLine(comment.getStringForShow());
+        ioService.outputLine(getCommentStringForShow(comment));
     }
 
     @Override
@@ -56,7 +56,7 @@ public class CommentServiceImpl implements CommentService {
         comment.setContent(content);
         comment = commentRepo.save(comment);
         ioService.outputLine("updated comment");
-        ioService.outputLine(comment.getStringForShow());
+        ioService.outputLine(getCommentStringForShow(comment));
     }
 
     @Override
@@ -67,4 +67,9 @@ public class CommentServiceImpl implements CommentService {
             ioService.outputLine(String.format("deleted comment with id %s", commentId));
         }
     }
+
+    public String getCommentStringForShow(Comment comment) {
+        return String.format("%s. %s commented:%n\t%s", comment.getId(), comment.getUser(), comment.getContent());
+    }
+
 }
