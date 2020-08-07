@@ -41,14 +41,14 @@ public class BookServiceImplTest {
         List<Book> books = Arrays.asList(
                 new Book(-1L, "test book 1", 1945),
                 new Book(-2L, "test book 2", 1950));
-        doReturn(books).when(bookRepo).getAll();
+        doReturn(books).when(bookRepo).findAll();
         service.listAllBooks();
         ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
         verify(ioService, times(3)).outputLine(captor.capture());
         List<String> output = captor.getAllValues();
         assertEquals(output.get(0), "Listing all books:");
-        assertEquals(output.get(1), books.get(0).shortString());
-        assertEquals(output.get(2), books.get(1).shortString());
+        assertEquals(output.get(1), service.getBookShortString(books.get(0)));
+        assertEquals(output.get(2), service.getBookShortString(books.get(1)));
     }
 
     @Test
@@ -56,13 +56,13 @@ public class BookServiceImplTest {
         List<Genre> genres = Collections.singletonList(new Genre(-1L, "test genre"));
         Author author = new Author(-1L, "test author", null);
         Book book = new Book(-1L, "test book", 1945, genres, author);
-        doReturn(book).when(bookRepo).getById(anyLong());
+        doReturn(book).when(bookRepo).getByIdWithDetails(anyLong());
         service.getBookDetails(-1L);
         ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
         verify(ioService, times(2)).outputLine(captor.capture());
         List<String> output = captor.getAllValues();
         assertEquals(output.get(0), "Book details:");
-        assertEquals(output.get(1), book.longString());
+        assertEquals(output.get(1), service.getBookLongString(book));
     }
 
     @Test
@@ -78,23 +78,44 @@ public class BookServiceImplTest {
         doReturn(author)
                 .when(authorRepo).getByName(anyString());
         doReturn(genres)
-                .when(genreRepo).getByNames(anyList());
+                .when(genreRepo).getByNameIn(anyList());
 
-        doReturn(book).when(bookRepo).add(any(Book.class));
+        doReturn(book).when(bookRepo).save(any(Book.class));
         service.addNewBook();
         ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
         verify(ioService, times(2)).outputLine(captor.capture());
         List<String> output = captor.getAllValues();
         assertEquals("inserted book", output.get(0));
-        assertEquals(book.longString(), output.get(1));
+        assertEquals(service.getBookLongString(book), output.get(1));
     }
 
     @Test
     void testDeleteBook() {
-        doReturn(true).when(bookRepo).delete(anyLong());
+        doReturn(1).when(bookRepo).removeById(anyLong());
         service.deleteBook(-1L);
         ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
         verify(ioService).outputLine(captor.capture());
         assertEquals("deleted book with id -1", captor.getValue());
+    }
+
+    @Test
+    void testGetBookShortString() {
+        String expected = "1. test book (1965)";
+        Book book = new Book(1, "test book", 1965);
+        assertEquals(expected, service.getBookShortString(book));
+    }
+
+    @Test
+    void testGetBookLongString() {
+        String expected = String.format("1. test book (1965)%n" +
+                "\tAuthor: test author%n" +
+                "\tGenres: test genre 1, test genre 2");
+        Author author = new Author(1L, "test author", null);
+        List<Genre> genres = Arrays.asList(
+                new Genre(1L, "test genre 1"),
+                new Genre(2L, "test genre 2")
+        );
+        Book book = new Book(1L, "test book", 1965, genres, author);
+        assertEquals(expected, service.getBookLongString(book));
     }
 }

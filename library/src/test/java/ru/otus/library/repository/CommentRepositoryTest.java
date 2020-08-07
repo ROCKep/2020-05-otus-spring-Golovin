@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
-import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.ComponentScan;
 import ru.otus.library.domain.Book;
 import ru.otus.library.domain.Comment;
 
@@ -15,10 +15,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 @DataJpaTest
-@Import(CommentRepositoryJpa.class)
-public class CommentRepositoryJpaTest {
+@ComponentScan(basePackages = "ru.otus.library.repository")
+public class CommentRepositoryTest {
     @Autowired
-    private CommentRepositoryJpa commentRepo;
+    private CommentRepository commentRepo;
     @Autowired
     private TestEntityManager em;
 
@@ -55,19 +55,20 @@ public class CommentRepositoryJpaTest {
     }
 
     @Test
-    void testUpdate() {
+    void testSave_update() {
         Comment commentToUpdate = em.find(Comment.class, 1L);
         commentToUpdate.setContent("test content 1 edited");
         commentToUpdate.setUser("test user 1 edited");
-        commentToUpdate = commentRepo.update(commentToUpdate);
+        commentToUpdate = commentRepo.save(commentToUpdate);
+        em.flush();
         em.detach(commentToUpdate);
         Comment updatedComment = em.find(Comment.class, commentToUpdate.getId());
         assertThat(updatedComment).isEqualToIgnoringGivenFields(commentToUpdate, "book");
     }
 
     @Test
-    void testDelete() {
-        commentRepo.delete(1L);
+    void testRemoveById() {
+        commentRepo.removeById(1L);
         em.flush();
         Comment comment = em.find(Comment.class, 1L);
         assertNull(comment);

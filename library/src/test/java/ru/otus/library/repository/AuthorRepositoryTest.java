@@ -3,7 +3,7 @@ package ru.otus.library.repository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.ComponentScan;
 import ru.otus.library.domain.Author;
 
 import java.time.LocalDate;
@@ -11,11 +11,11 @@ import java.time.LocalDate;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
-@Import({AuthorRepositoryJpa.class})
-class AuthorRepositoryJpaTest {
+@ComponentScan(basePackages = "ru.otus.library.repository")
+class AuthorRepositoryTest {
 
     @Autowired
-    private AuthorRepositoryJpa authorRepo;
+    private AuthorRepository authorRepo;
 
     @Test
     void testGetByName() {

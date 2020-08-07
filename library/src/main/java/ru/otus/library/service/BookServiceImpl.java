@@ -12,6 +12,7 @@ import ru.otus.library.repository.GenreRepository;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -26,17 +27,17 @@ public class BookServiceImpl implements BookService {
     @Transactional(readOnly = true)
     public void listAllBooks() {
         ioService.outputLine("Listing all books:");
-        List<Book> books = bookRepo.getAll();
+        List<Book> books = bookRepo.findAll();
         books.forEach(book ->
-                ioService.outputLine(book.shortString()));
+                ioService.outputLine(getBookShortString(book)));
     }
 
     @Override
     @Transactional(readOnly = true)
     public void getBookDetails(long id) {
         ioService.outputLine("Book details:");
-        Book book = bookRepo.getById(id);
-        ioService.outputLine(book.longString());
+        Book book = bookRepo.getByIdWithDetails(id);
+        ioService.outputLine(getBookLongString(book));
     }
 
     @Override
@@ -51,19 +52,40 @@ public class BookServiceImpl implements BookService {
         ioService.output("input genre names: ");
         String genreNames = ioService.inputLine();
         Author author = authorRepo.getByName(authorName);
-        List<Genre> genres = genreRepo.getByNames(Arrays.asList(genreNames.split(", ")));
+        List<Genre> genres = genreRepo.getByNameIn(Arrays.asList(genreNames.split(", ")));
         Book book = new Book(name, releaseYear, genres, author);
-        book = bookRepo.add(book);
+        book = bookRepo.save(book);
         ioService.outputLine("inserted book");
-        ioService.outputLine(book.longString());
+        ioService.outputLine(getBookLongString(book));
     }
 
     @Override
     @Transactional
     public void deleteBook(long id) {
-        boolean deleted = bookRepo.delete(id);
+        boolean deleted = bookRepo.removeById(id) > 0;
         if (deleted) {
             ioService.outputLine(String.format("deleted book with id %s", id));
         }
+    }
+
+    String getBookShortString(Book book) {
+        StringBuilder builder = new StringBuilder();
+        builder.append(String.format("%d. %s", book.getId(), book.getName()));
+        if (book.getReleaseYear() != null) {
+            builder.append(String.format(" (%d)", book.getReleaseYear()));
+        }
+        return builder.toString();
+    }
+
+    String getBookLongString(Book book) {
+        StringBuilder builder = new StringBuilder();
+        builder.append(String.format("%s%n", getBookShortString(book)));
+        builder.append(String.format("\tAuthor: %s%n", book.getAuthor().getName()));
+        if (!book.getGenres().isEmpty()) {
+            builder.append(String.format("\tGenres: %s",
+                    book.getGenres().stream()
+                            .map(Genre::getName).collect(Collectors.joining(", "))));
+        }
+        return builder.toString();
     }
 }

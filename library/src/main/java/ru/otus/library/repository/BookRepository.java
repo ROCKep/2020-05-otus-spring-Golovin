@@ -1,13 +1,13 @@
 package ru.otus.library.repository;
 
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import ru.otus.library.domain.Book;
 
-import java.util.List;
-
-public interface BookRepository {
-    List<Book> getAll();
+public interface BookRepository extends JpaRepository<Book, Long> {
+    @Query("select b from Book b join fetch b.genres join fetch b.author where b.id = :id")
+    Book getByIdWithDetails(@Param("id") long id);
     Book getById(long id);
-    Book getByIdNoDetails(long id);
-    Book add(Book book);
-    boolean delete(long id);
+    int removeById(long id);
 }

@@ -7,12 +7,9 @@ import lombok.NonNull;
 
 import javax.persistence.*;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "books")
-@NamedEntityGraph(name = "authors-entity-graph",
-        attributeNodes = @NamedAttributeNode("author"))
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -45,24 +42,5 @@ public class Book {
         this.releaseYear = releaseYear;
         this.genres = genres;
         this.author = author;
-    }
-
-    public String shortString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append(String.format("%d. %s", id, name));
-        if (releaseYear != null) {
-            builder.append(String.format(" (%d)", releaseYear));
-        }
-        return builder.toString();
-    }
-
-    public String longString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append(String.format("%s%n", shortString()));
-        builder.append(String.format("\tAuthor: %s%n", author.getName()));
-        if (!genres.isEmpty()) {
-            builder.append(String.format("\tGenres: %s", genres.stream().map(Genre::getName).collect(Collectors.joining(", "))));
-        }
-        return builder.toString();
     }
 }

@@ -29,8 +29,4 @@ public class Comment {
         this.content = content;
         this.user = user;
     }
-
-    public String getStringForShow() {
-        return String.format("%s. %s commented:%n\t%s", id, user, content);
-    }
 }

@@ -40,8 +40,8 @@ public class CommentServiceImplTest {
         verify(ioService, times(3)).outputLine(captor.capture());
         List<String> output = captor.getAllValues();
         assertEquals("comments for book \"test book\"", output.get(0));
-        assertEquals(comments.get(0).getStringForShow(), output.get(1));
-        assertEquals(comments.get(1).getStringForShow(), output.get(2));
+        assertEquals(commentService.getCommentStringForShow(comments.get(0)), output.get(1));
+        assertEquals(commentService.getCommentStringForShow(comments.get(1)), output.get(2));
     }
 
     @Test
@@ -50,14 +50,14 @@ public class CommentServiceImplTest {
         doReturn(comment.getUser(), comment.getContent())
                 .when(ioService).inputLine();
         Book book = new Book(1L, "test book", null);
-        doReturn(book).when(bookRepo).getByIdNoDetails(anyLong());
+        doReturn(book).when(bookRepo).getById(anyLong());
         doReturn(comment).when(commentRepo).save(any(Comment.class));
         commentService.addComment(1L);
         ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
         verify(ioService, times(2)).outputLine(captor.capture());
         List<String> output = captor.getAllValues();
         assertEquals("inserted comment", output.get(0));
-        assertEquals(comment.getStringForShow(), output.get(1));
+        assertEquals(commentService.getCommentStringForShow(comment), output.get(1));
     }
 
     @Test
@@ -67,21 +67,28 @@ public class CommentServiceImplTest {
         doReturn(newComment.getUser(), newComment.getContent())
                 .when(ioService).inputLine();
         doReturn(oldComment).when(commentRepo).getById(anyLong());
-        doReturn(newComment).when(commentRepo).update(any(Comment.class));
+        doReturn(newComment).when(commentRepo).save(any(Comment.class));
         commentService.editComment(1L);
         ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
         verify(ioService, times(2)).outputLine(captor.capture());
         List<String> output = captor.getAllValues();
         assertEquals("updated comment", output.get(0));
-        assertEquals(newComment.getStringForShow(), output.get(1));
+        assertEquals(commentService.getCommentStringForShow(newComment), output.get(1));
     }
 
     @Test
     void testDeleteComment() {
-        doReturn(true).when(commentRepo).delete(anyLong());
+        doReturn(1).when(commentRepo).removeById(anyLong());
         commentService.deleteComment(1L);
         ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
         verify(ioService).outputLine(captor.capture());
         assertEquals("deleted comment with id 1", captor.getValue());
+    }
+
+    @Test
+    public void testGetCommentStringForShow() {
+        Comment comment = new Comment("test content", "test user");
+        comment.setId(1L);
+        assertEquals(String.format("1. test user commented:%n\ttest content"), commentService.getCommentStringForShow(comment));
     }
 }
