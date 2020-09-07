@@ -1,14 +1,11 @@
 package ru.otus.library.service;
 
-import org.springframework.transaction.annotation.Transactional;
-
 public interface CommentService {
-    void listBookComments(long bookId);
+    void listBookComments(String bookId);
 
-    void addComment(long bookId);
+    void addComment(String bookId);
 
-    @Transactional
-    void editComment(long commentId);
+    void editComment(String commentId);
 
-    void deleteComment(long commentId);
+    void deleteComment(String commentId);
 }

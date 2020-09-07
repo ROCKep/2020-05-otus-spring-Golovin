@@ -1,10 +1,10 @@
 package ru.otus.library.repository;
 
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.mongodb.repository.MongoRepository;
 import ru.otus.library.domain.Author;
 
-public interface AuthorRepository extends CrudRepository<Author, Long> {
+public interface AuthorRepository extends MongoRepository<Author, String> {
 
-    Author getByName(String name);
+    Author findByName(String name);
 
 }

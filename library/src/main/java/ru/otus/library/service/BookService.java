@@ -4,9 +4,9 @@ public interface BookService {
 
     void listAllBooks();
 
-    void getBookDetails(long id);
+    void getBookDetails(String id);
 
     void addNewBook();
 
-    void deleteBook(long id);
+    void deleteBook(String id);
 }

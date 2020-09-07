@@ -8,7 +8,6 @@ import ru.otus.library.domain.Book;
 import ru.otus.library.domain.Genre;
 import ru.otus.library.repository.AuthorRepository;
 import ru.otus.library.repository.BookRepository;
-import ru.otus.library.repository.GenreRepository;
 
 import java.util.Arrays;
 import java.util.List;
@@ -21,7 +20,6 @@ public class BookServiceImpl implements BookService {
     private final IOService ioService;
     private final BookRepository bookRepo;
     private final AuthorRepository authorRepo;
-    private final GenreRepository genreRepo;
 
     @Override
     @Transactional(readOnly = true)
@@ -34,9 +32,9 @@ public class BookServiceImpl implements BookService {
 
     @Override
     @Transactional(readOnly = true)
-    public void getBookDetails(long id) {
+    public void getBookDetails(String id) {
         ioService.outputLine("Book details:");
-        Book book = bookRepo.getByIdWithDetails(id);
+        Book book = bookRepo.getById(id);
         ioService.outputLine(getBookLongString(book));
     }
 
@@ -51,8 +49,10 @@ public class BookServiceImpl implements BookService {
         String authorName = ioService.inputLine();
         ioService.output("input genre names: ");
         String genreNames = ioService.inputLine();
-        Author author = authorRepo.getByName(authorName);
-        List<Genre> genres = genreRepo.getByNameIn(Arrays.asList(genreNames.split(", ")));
+        Author author = authorRepo.findByName(authorName);
+        List<Genre> genres = Arrays.stream(genreNames.split(", "))
+                .map(Genre::new)
+                .collect(Collectors.toList());
         Book book = new Book(name, releaseYear, genres, author);
         book = bookRepo.save(book);
         ioService.outputLine("inserted book");
@@ -61,16 +61,14 @@ public class BookServiceImpl implements BookService {
 
     @Override
     @Transactional
-    public void deleteBook(long id) {
-        boolean deleted = bookRepo.removeById(id) > 0;
-        if (deleted) {
-            ioService.outputLine(String.format("deleted book with id %s", id));
-        }
+    public void deleteBook(String id) {
+        bookRepo.deleteById(id);
+        ioService.outputLine(String.format("deleted book with id %s", id));
     }
 
     String getBookShortString(Book book) {
         StringBuilder builder = new StringBuilder();
-        builder.append(String.format("%d. %s", book.getId(), book.getName()));
+        builder.append(String.format("%s. %s", book.getId(), book.getName()));
         if (book.getReleaseYear() != null) {
             builder.append(String.format(" (%d)", book.getReleaseYear()));
         }

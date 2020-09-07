@@ -5,8 +5,8 @@ import ru.otus.library.domain.Comment;
 
 import java.util.List;
 
-public interface CommentRepository extends CrudRepository<Comment, Long> {
-    List<Comment> getByBookId(long bookId);
-    Comment getById(long commentId);
-    int removeById(long id);
+public interface CommentRepository extends CrudRepository<Comment, String> {
+    List<Comment> findByBookId(String bookId);
+    Comment getById(String commentId);
+    void removeByBookId(String bookId);
 }
