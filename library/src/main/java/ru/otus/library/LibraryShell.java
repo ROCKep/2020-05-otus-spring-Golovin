@@ -20,7 +20,7 @@ public class LibraryShell {
     }
 
     @ShellMethod(value = "get book details", key = {"b", "book"})
-    public void getBookDetails(@ShellOption long id) {
+    public void getBookDetails(@ShellOption String id) {
         bookService.getBookDetails(id);
     }
 
@@ -30,27 +30,27 @@ public class LibraryShell {
     }
 
     @ShellMethod(value = "delete book", key = {"d", "delete"})
-    public void deleteBook(@ShellOption long id) {
+    public void deleteBook(@ShellOption String id) {
         bookService.deleteBook(id);
     }
 
     @ShellMethod(value = "list book comments", key = {"lc", "list-comments"})
-    public void listBookComments(@ShellOption long bookId) {
+    public void listBookComments(@ShellOption String bookId) {
         commentService.listBookComments(bookId);
     }
 
     @ShellMethod(value = "add comment", key = {"ac", "add-comment"})
-    public void addComment(@ShellOption long commentId) {
+    public void addComment(@ShellOption String commentId) {
         commentService.addComment(commentId);
     }
 
     @ShellMethod(value = "edit comment", key = {"ec", "edit-comment"})
-    public void editComment(@ShellOption long commentId) {
+    public void editComment(@ShellOption String commentId) {
         commentService.editComment(commentId);
     }
 
     @ShellMethod(value = "delete comment", key = {"dc", "delete-comment"})
-    public void deleteComment(@ShellOption long commentId) {
+    public void deleteComment(@ShellOption String commentId) {
         commentService.deleteComment(commentId);
     }
 }

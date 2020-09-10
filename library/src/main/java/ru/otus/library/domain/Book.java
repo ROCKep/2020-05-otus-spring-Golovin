@@ -4,43 +4,40 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.DBRef;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-import javax.persistence.*;
 import java.util.List;
 
-@Entity
-@Table(name = "books")
+@Document
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class Book {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String id;
 
-    @Column(name = "name")
     private String name;
 
-    @Column(name = "release_year")
     private Integer releaseYear;
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "genres_books", joinColumns = @JoinColumn(name = "book_id"), inverseJoinColumns = @JoinColumn(name = "genre_id"))
     private List<Genre> genres;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @DBRef
     private Author author;
 
-    public Book(long id, @NonNull String name, Integer releaseYear) {
+    public Book(String id, @NonNull String name, Integer releaseYear) {
         this.id = id;
         this.name = name;
         this.releaseYear = releaseYear;
     }
 
+    public Book(@NonNull String name, Integer releaseYear) {
+        this(null, name, releaseYear);
+    }
+
     public Book(@NonNull String name, Integer releaseYear, @NonNull List<Genre> genres, @NonNull Author author) {
-        this.name = name;
-        this.releaseYear = releaseYear;
-        this.genres = genres;
-        this.author = author;
+        this(null, name, releaseYear, genres, author);
     }
 }

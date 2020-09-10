@@ -2,12 +2,11 @@ spring:
   shell:
     interactive:
       enabled: false
-  datasource:
-    url: jdbc:h2:mem:testdb
-    initialization-mode: always
-    data: test-data.sql
-
-  jpa:
-    generate-ddl: false
-    hibernate:
-      ddl-auto: none
+  data:
+    mongodb:
+      port: 0
+      database: libraryTestDB
+mongock:
+  change-logs-scan-package:
+    - ru.otus.library.testchangelog
+  runner-type: InitializingBean

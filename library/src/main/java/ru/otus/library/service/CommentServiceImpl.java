@@ -20,8 +20,8 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     @Transactional(readOnly = true)
-    public void listBookComments(long bookId) {
-        List<Comment> comments = commentRepo.getByBookId(bookId);
+    public void listBookComments(String bookId) {
+        List<Comment> comments = commentRepo.findByBookId(bookId);
         if (comments.size() > 0) {
             ioService.outputLine(String.format("comments for book \"%s\"", comments.get(0).getBook().getName()));
             comments.forEach(comment ->
@@ -31,7 +31,7 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     @Transactional
-    public void addComment(long bookId) {
+    public void addComment(String bookId) {
         Book book = bookRepo.getById(bookId);
         ioService.output("input user: ");
         String user = ioService.inputLine();
@@ -46,7 +46,7 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     @Transactional
-    public void editComment(long commentId) {
+    public void editComment(String commentId) {
         Comment comment = commentRepo.getById(commentId);
         ioService.output("input user: ");
         String user = ioService.inputLine();
@@ -61,11 +61,9 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     @Transactional
-    public void deleteComment(long commentId) {
-        boolean deleted = commentRepo.removeById(commentId) > 0;
-        if (deleted) {
-            ioService.outputLine(String.format("deleted comment with id %s", commentId));
-        }
+    public void deleteComment(String commentId) {
+        commentRepo.deleteById(commentId);
+        ioService.outputLine(String.format("deleted comment with id %s", commentId));
     }
 
     public String getCommentStringForShow(Comment comment) {
