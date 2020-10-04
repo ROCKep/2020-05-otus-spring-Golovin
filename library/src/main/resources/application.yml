@@ -4,6 +4,8 @@ spring:
       host: localhost
       port: 27017
       database: libraryDB
+  mvc:
+    static-path-pattern: /static/**
 mongock:
   change-logs-scan-package:
     - ru.otus.library.changelog

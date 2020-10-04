@@ -37,22 +37,22 @@ public class InitMongoDBDataChangeLog {
                         List.of(
                                 new Genre("Антиутопия"),
                                 new Genre("Классика")),
-                        authorRepository.findByName("Джордж Оруэлл")),
+                        authorRepository.findByName("Джордж Оруэлл").get()),
                 new Book("Гарри Поттер и философский камень", null,
                         List.of(new Genre("Фэнтези")),
-                        authorRepository.findByName("Джоан Роулинг")),
+                        authorRepository.findByName("Джоан Роулинг").get()),
                 new Book("Мастер и Маргарита", 1966,
                         List.of(new Genre("Классика")),
-                        authorRepository.findByName("Михаил Булгаков"))));
+                        authorRepository.findByName("Михаил Булгаков").get())));
 
     }
 
     @ChangeSet(order = "003", id = "initComments", author = "golovin", runAlways = true)
     public void initComments(CommentRepository repository, BookRepository bookRepository){
         repository.saveAll(List.of(
-                new Comment("Крутая книга)", "turboVasyan123", bookRepository.findByName("Мастер и Маргарита")),
-                new Comment("Не очень(", "coolDude2000", bookRepository.findByName("Мастер и Маргарита")),
-                new Comment("Пойдет", "proGamerMLG360", bookRepository.findByName("1984"))
+                new Comment("Крутая книга)", "turboVasyan123", bookRepository.findByName("Мастер и Маргарита").get()),
+                new Comment("Не очень(", "coolDude2000", bookRepository.findByName("Мастер и Маргарита").get()),
+                new Comment("Пойдет", "proGamerMLG360", bookRepository.findByName("1984").get())
         ));
     }
 }

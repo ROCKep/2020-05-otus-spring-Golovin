@@ -23,7 +23,7 @@ class BookRepositoryTest {
 
     @Test
     void testCascadeDelete() {
-        Book book = bookRepo.findByName("test book 1");
+        Book book = bookRepo.findByName("test bookDetails 1").get();
         List<Comment> comments = commentRepo.findByBookId(book.getId());
         assertFalse(comments.isEmpty());
         bookRepo.deleteById(book.getId());

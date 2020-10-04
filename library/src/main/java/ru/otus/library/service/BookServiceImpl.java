@@ -6,6 +6,9 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.otus.library.domain.Author;
 import ru.otus.library.domain.Book;
 import ru.otus.library.domain.Genre;
+import ru.otus.library.dto.BookDetailsDto;
+import ru.otus.library.exception.BadRequestException;
+import ru.otus.library.exception.NoDataFoundException;
 import ru.otus.library.repository.AuthorRepository;
 import ru.otus.library.repository.BookRepository;
 
@@ -17,73 +20,59 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class BookServiceImpl implements BookService {
 
-    private final IOService ioService;
     private final BookRepository bookRepo;
     private final AuthorRepository authorRepo;
 
     @Override
     @Transactional(readOnly = true)
-    public void listAllBooks() {
-        ioService.outputLine("Listing all books:");
-        List<Book> books = bookRepo.findAll();
-        books.forEach(book ->
-                ioService.outputLine(getBookShortString(book)));
+    public List<Book> listAllBooks() {
+        return bookRepo.findAll();
     }
 
     @Override
     @Transactional(readOnly = true)
-    public void getBookDetails(String id) {
-        ioService.outputLine("Book details:");
-        Book book = bookRepo.getById(id);
-        ioService.outputLine(getBookLongString(book));
+    public BookDetailsDto getBookDetails(String id) {
+        Book book = bookRepo.findById(id).orElseThrow(() ->
+                new NoDataFoundException(String.format("Книга с id '%s' не найдена", id)));
+        return BookDetailsDto.from(book);
     }
 
     @Override
     @Transactional
-    public void addNewBook() {
-        ioService.output("input name: ");
-        String name = ioService.inputLine();
-        ioService.output("input release year: ");
-        int releaseYear = ioService.inputInteger();
-        ioService.output("input author name: ");
-        String authorName = ioService.inputLine();
-        ioService.output("input genre names: ");
-        String genreNames = ioService.inputLine();
-        Author author = authorRepo.findByName(authorName);
-        List<Genre> genres = Arrays.stream(genreNames.split(", "))
-                .map(Genre::new)
-                .collect(Collectors.toList());
-        Book book = new Book(name, releaseYear, genres, author);
+    public String addNewBook(BookDetailsDto bookDetails) {
+        Author author = authorRepo.findByName(bookDetails.getAuthorName()).orElseThrow(() ->
+                new BadRequestException(String.format("Автора с именем '%s' не существует", bookDetails.getAuthorName())));
+        List<Genre> genres = generateGenres(bookDetails.getGenreNames());
+        Book book = new Book(bookDetails.getName(), bookDetails.getReleaseYear(), genres, author);
         book = bookRepo.save(book);
-        ioService.outputLine("inserted book");
-        ioService.outputLine(getBookLongString(book));
+        return book.getId();
+    }
+
+    @Override
+    public void editBook(BookDetailsDto bookDetails) {
+        Author author = authorRepo.findByName(bookDetails.getAuthorName()).orElseThrow(() ->
+                new BadRequestException(String.format("Автора с именем '%s' не существует", bookDetails.getAuthorName())));
+        List<Genre> genres = generateGenres(bookDetails.getGenreNames());
+        Book book = bookRepo.findById(bookDetails.getId()).orElseThrow(() ->
+                new BadRequestException(String.format("Книги с id '%s' не существует", bookDetails.getId())));
+        book.setName(bookDetails.getName());
+        book.setReleaseYear(bookDetails.getReleaseYear());
+        book.setAuthor(author);
+        book.setGenres(genres);
+        bookRepo.save(book);
     }
 
     @Override
     @Transactional
     public void deleteBook(String id) {
+        bookRepo.findById(id).orElseThrow(() ->
+                new NoDataFoundException(String.format("Книга с id '%s' не найдена", id)));
         bookRepo.deleteById(id);
-        ioService.outputLine(String.format("deleted book with id %s", id));
     }
 
-    String getBookShortString(Book book) {
-        StringBuilder builder = new StringBuilder();
-        builder.append(String.format("%s. %s", book.getId(), book.getName()));
-        if (book.getReleaseYear() != null) {
-            builder.append(String.format(" (%d)", book.getReleaseYear()));
-        }
-        return builder.toString();
-    }
-
-    String getBookLongString(Book book) {
-        StringBuilder builder = new StringBuilder();
-        builder.append(String.format("%s%n", getBookShortString(book)));
-        builder.append(String.format("\tAuthor: %s%n", book.getAuthor().getName()));
-        if (!book.getGenres().isEmpty()) {
-            builder.append(String.format("\tGenres: %s",
-                    book.getGenres().stream()
-                            .map(Genre::getName).collect(Collectors.joining(", "))));
-        }
-        return builder.toString();
+    private List<Genre> generateGenres(String genreNames) {
+        return Arrays.stream(genreNames.split(", "))
+                .map(Genre::new)
+                .collect(Collectors.toList());
     }
 }
