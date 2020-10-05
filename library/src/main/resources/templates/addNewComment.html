@@ -14,8 +14,8 @@
 <body>
 
 <div class="container">
-    <h1>Новый комментарий к книге "<span th:text="${bookDetails.name}">Книга 1</span>"</h1>
-    <form th:action="@{/books/{bookId}/comments/add(bookId = ${bookDetails.id})}" th:object="${comment}"
+    <h1>Новый комментарий к книге "<span th:text="${book.name}">Книга 1</span>"</h1>
+    <form th:action="@{/books/{bookId}/comments/add(bookId = ${book.id})}" th:object="${comment}"
           method="post" action="getBookDetails.html">
         <div class="form-group">
             <label for="user">Имя пользователя</label>

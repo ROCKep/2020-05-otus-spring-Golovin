@@ -5,8 +5,8 @@ import ru.otus.library.domain.Comment;
 import java.util.List;
 
 public interface CommentService {
-    List<Comment> listBookComments(String bookId);
+    List<Comment> listBookComments(long bookId);
 
-    void addComment(String bookId, Comment comment);
+    void addComment(long bookId, Comment comment);
 
 }

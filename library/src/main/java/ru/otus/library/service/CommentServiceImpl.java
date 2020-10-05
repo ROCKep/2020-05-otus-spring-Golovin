@@ -20,15 +20,16 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<Comment> listBookComments(String bookId) {
-        bookRepo.findById(bookId).orElseThrow(() ->
-                new NoDataFoundException(String.format("Книга с id '%s' не найдена", bookId)));
+    public List<Comment> listBookComments(long bookId) {
+        if (!bookRepo.existsById(bookId)) {
+            throw new NoDataFoundException(String.format("Книга с id '%s' не найдена", bookId));
+        }
         return commentRepo.findByBookId(bookId);
     }
 
     @Override
     @Transactional
-    public void addComment(String bookId, Comment comment) {
+    public void addComment(long bookId, Comment comment) {
         Book book = bookRepo.findById(bookId).orElseThrow(() ->
                 new NoDataFoundException(String.format("Книга с id '%s' не найдена", bookId)));
         comment.setBook(book);

@@ -3,21 +3,24 @@ package ru.otus.library.domain;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
 
+import javax.persistence.*;
 import java.time.LocalDate;
 
-@Document
+@Entity
+@Table(name = "authors")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class Author {
     @Id
-    private String id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
+    @Column(name = "name")
     private String name;
 
+    @Column(name = "date_of_birth")
     private LocalDate dateOfBirth;
 
     public Author(String name, LocalDate dateOfBirth) {

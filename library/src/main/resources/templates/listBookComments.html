@@ -14,8 +14,8 @@
 <body>
 
 <div class="container">
-    <h1>Комментарии к книге "<span th:text="${bookDetails.name}">Книга 1</span>"</h1>
-    <p><a th:href="@{/books/{bookId}/comments/add(bookId=${bookDetails.id})}" href="addNewComment.html">Написать комментарий</a></p>
+    <h1>Комментарии к книге "<span th:text="${book.name}">Книга 1</span>"</h1>
+    <p><a th:href="@{/books/{bookId}/comments/add(bookId=${book.id})}" href="addNewComment.html">Написать комментарий</a></p>
     <div class="media" th:each="comment : ${comments}">
         <div class="media-body">
             <h4 class="media-heading" th:text="${comment.user}">Пользователь 1</h4>

@@ -1,12 +1,13 @@
 spring:
-  data:
-    mongodb:
-      host: localhost
-      port: 27017
-      database: libraryDB
   mvc:
     static-path-pattern: /static/**
-mongock:
-  change-logs-scan-package:
-    - ru.otus.library.changelog
-  runner-type: InitializingBean
+  h2:
+    console:
+      enabled: true
+  datasource:
+    url: jdbc:h2:mem:testdb
+    initialization-mode: always
+  jpa:
+    generate-ddl: false
+    hibernate:
+      ddl-auto: none

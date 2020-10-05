@@ -9,11 +9,13 @@ public interface BookService {
 
     List<Book> listAllBooks();
 
-    BookDetailsDto getBookDetails(String id);
+    Book getBook(long id);
 
-    String addNewBook(BookDetailsDto bookDetails);
+    BookDetailsDto getBookDetails(long id);
+
+    long addNewBook(BookDetailsDto bookDetails);
 
     void editBook(BookDetailsDto bookDetails);
 
-    void deleteBook(String id);
+    void deleteBook(long id);
 }

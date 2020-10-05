@@ -23,14 +23,14 @@ public class LibraryController {
     }
 
     @GetMapping("/{id}")
-    public String getBookDetails(@PathVariable String id, Model model) {
+    public String getBookDetails(@PathVariable long id, Model model) {
         model.addAttribute("bookDetails", bookService.getBookDetails(id));
         return "getBookDetails";
     }
 
     @GetMapping("/{bookId}/comments")
-    public String listBookComments(@PathVariable String bookId, Model model) {
-        model.addAttribute("bookDetails", bookService.getBookDetails(bookId));
+    public String listBookComments(@PathVariable long bookId, Model model) {
+        model.addAttribute("book", bookService.getBook(bookId));
         model.addAttribute("comments", commentService.listBookComments(bookId));
         return "listBookComments";
     }
@@ -43,38 +43,38 @@ public class LibraryController {
 
     @PostMapping("/add")
     public String addNewBookSubmit(@ModelAttribute BookDetailsDto bookDetails) {
-        String bookId = bookService.addNewBook(bookDetails);
+        long bookId = bookService.addNewBook(bookDetails);
         return "redirect:/books/" + bookId;
     }
 
     @GetMapping("/{bookId}/edit")
-    public String editBookForm(@PathVariable String bookId, Model model) {
+    public String editBookForm(@PathVariable long bookId, Model model) {
         model.addAttribute("bookDetails", bookService.getBookDetails(bookId));
         return "editBook";
     }
 
     @PostMapping("/{bookId}/edit")
-    public String editBookSubmit(@PathVariable String bookId, @ModelAttribute BookDetailsDto bookDetails) {
+    public String editBookSubmit(@PathVariable long bookId, @ModelAttribute BookDetailsDto bookDetails) {
         bookDetails.setId(bookId);
         bookService.editBook(bookDetails);
         return "redirect:/books/" + bookId;
     }
 
     @GetMapping("/{bookId}/delete")
-    public String deleteBook(@PathVariable String bookId) {
+    public String deleteBook(@PathVariable long bookId) {
         bookService.deleteBook(bookId);
         return "redirect:/books";
     }
 
     @GetMapping("/{bookId}/comments/add")
-    public String addNewCommentForm(@PathVariable String bookId, Model model) {
-        model.addAttribute("bookDetails", bookService.getBookDetails(bookId));
+    public String addNewCommentForm(@PathVariable long bookId, Model model) {
+        model.addAttribute("book", bookService.getBook(bookId));
         model.addAttribute("comment", new Comment());
         return "addNewComment";
     }
 
     @PostMapping("/{bookId}/comments/add")
-    public String addNewCommentSubmit(@PathVariable String bookId, @ModelAttribute Comment comment) {
+    public String addNewCommentSubmit(@PathVariable long bookId, @ModelAttribute Comment comment) {
         commentService.addComment(bookId, comment);
         return String.format("redirect:/books/%s/comments", bookId);
     }

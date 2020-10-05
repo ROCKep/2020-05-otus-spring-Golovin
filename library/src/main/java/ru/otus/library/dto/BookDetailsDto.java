@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @NoArgsConstructor
 public class BookDetailsDto {
-    private String id;
+    private Long id;
     private String name;
     private String authorName;
     private String genreNames;
