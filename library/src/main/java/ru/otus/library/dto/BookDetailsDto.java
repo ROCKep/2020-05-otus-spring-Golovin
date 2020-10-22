@@ -4,6 +4,7 @@ import lombok.*;
 import ru.otus.library.domain.Book;
 import ru.otus.library.domain.Genre;
 
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Data
@@ -12,8 +13,8 @@ import java.util.stream.Collectors;
 public class BookDetailsDto {
     private Long id;
     private String name;
-    private String authorName;
-    private String genreNames;
+    private String author;
+    private List<String> genres;
     private Integer releaseYear;
 
     public static BookDetailsDto from(@NonNull Book book) {
@@ -23,7 +24,7 @@ public class BookDetailsDto {
                 book.getAuthor().getName(),
                 book.getGenres().stream()
                         .map(Genre::getName)
-                        .collect(Collectors.joining(", ")),
+                        .collect(Collectors.toList()),
                 book.getReleaseYear());
     }
 }
