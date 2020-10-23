@@ -6,7 +6,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class CommentDto {
-    private long id;
+    private Long id;
     private String user;
     private String content;
 }

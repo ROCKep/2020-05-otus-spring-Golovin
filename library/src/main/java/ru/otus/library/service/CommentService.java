@@ -1,6 +1,5 @@
 package ru.otus.library.service;
 
-import ru.otus.library.domain.Comment;
 import ru.otus.library.dto.CommentDto;
 
 import java.util.List;

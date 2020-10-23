@@ -1,8 +1,6 @@
 import React from "react";
 import Button from "react-bootstrap/Button";
-import PropTypes from "prop-types";
 import Comments from "./Comments";
-// import CommentModal from "./CommentModal";
 import axios from "axios";
 import BookModal from "./BookModal";
 import { withRouter } from 'react-router';
@@ -12,7 +10,6 @@ class BookDetails extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            newCommentModalVisible: false,
             bookModalVisible: false,
             bookDetails: null
         };
@@ -20,8 +17,6 @@ class BookDetails extends React.Component {
         this.openBookModal = this.openBookModal.bind(this);
         this.saveBook = this.saveBook.bind(this);
         this.deleteBook = this.deleteBook.bind(this);
-        // this.handleNewCommentModalClose = this.handleNewCommentModalClose.bind(this);
-        // this.handleNewCommentModalOpen = this.handleNewCommentModalOpen.bind(this);
     }
 
     componentDidMount() {
@@ -33,14 +28,6 @@ class BookDetails extends React.Component {
                 }))
             .catch(error => console.log(error));
     }
-
-    // handleNewCommentModalClose() {
-    //     this.setState({newCommentModalVisible: false});
-    // }
-    //
-    // handleNewCommentModalOpen() {
-    //     this.setState({newCommentModalVisible: true});
-    // }
 
     openBookModal() {
         this.setState({bookModalVisible: true});
@@ -66,7 +53,7 @@ class BookDetails extends React.Component {
     }
 
     render() {
-        const {bookDetails, bookModalVisible, newCommentModalVisible} = this.state;
+        const {bookDetails, bookModalVisible} = this.state;
         return bookDetails && <>
             <h1>{bookDetails.name}</h1>
             <h2>Информация</h2>
@@ -93,10 +80,6 @@ class BookDetails extends React.Component {
 
         </>
     }
-}
-
-BookDetails.propTypes = {
-    match: PropTypes.object.isRequired,
 }
 
 export default withRouter(BookDetails);

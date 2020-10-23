@@ -2,6 +2,7 @@ import React from "react";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
+import PropTypes from "prop-types";
 
 class CommentModal extends React.Component {
     state = {
@@ -50,6 +51,11 @@ class CommentModal extends React.Component {
             </Modal.Footer>
         </Modal>
     }
+}
+
+CommentModal.propTypes = {
+    onClose: PropTypes.func.isRequired,
+    onSubmit: PropTypes.func.isRequired
 }
 
 export default CommentModal;

@@ -36,12 +36,6 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public Book getBook(long id) {
-        return bookRepo.findById(id).orElseThrow(() ->
-                new NoDataFoundException(String.format("Книга с id '%s' не найдена", id)));
-    }
-
-    @Override
     @Transactional(readOnly = true)
     public BookDetailsDto getBookDetails(long id) {
         Book book = bookRepo.findByIdWithDetails(id).orElseThrow(() ->
