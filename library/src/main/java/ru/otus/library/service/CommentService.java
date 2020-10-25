@@ -1,12 +1,12 @@
 package ru.otus.library.service;
 
-import ru.otus.library.domain.Comment;
+import ru.otus.library.dto.CommentDto;
 
 import java.util.List;
 
 public interface CommentService {
-    List<Comment> listBookComments(long bookId);
+    List<CommentDto> listBookComments(long bookId);
 
-    void addComment(long bookId, Comment comment);
+    CommentDto addNewComment(long bookId, CommentDto comment);
 
 }

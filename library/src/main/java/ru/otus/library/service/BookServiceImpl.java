@@ -7,6 +7,7 @@ import ru.otus.library.domain.Author;
 import ru.otus.library.domain.Book;
 import ru.otus.library.domain.Genre;
 import ru.otus.library.dto.BookDetailsDto;
+import ru.otus.library.dto.BookDto;
 import ru.otus.library.exception.BadRequestException;
 import ru.otus.library.exception.NoDataFoundException;
 import ru.otus.library.repository.AuthorRepository;
@@ -14,6 +15,7 @@ import ru.otus.library.repository.BookRepository;
 import ru.otus.library.repository.GenreRepository;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -25,14 +27,12 @@ public class BookServiceImpl implements BookService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<Book> listAllBooks() {
-        return bookRepo.findAll();
-    }
-
-    @Override
-    public Book getBook(long id) {
-        return bookRepo.findById(id).orElseThrow(() ->
-                new NoDataFoundException(String.format("Книга с id '%s' не найдена", id)));
+    public List<BookDto> listAllBooks() {
+        List<Book> books = bookRepo.findAll();
+        return books.stream()
+                .map(book ->
+                        new BookDto(book.getId(), book.getName(), book.getAuthor().getName(), book.getReleaseYear()))
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -45,22 +45,22 @@ public class BookServiceImpl implements BookService {
 
     @Override
     @Transactional
-    public long addNewBook(BookDetailsDto bookDetails) {
-        Author author = authorRepo.findByName(bookDetails.getAuthorName()).orElseThrow(() ->
-                new BadRequestException(String.format("Автора с именем '%s' не существует", bookDetails.getAuthorName())));
-        List<String> genreNamesList = List.of(bookDetails.getGenreNames().split(", "));
+    public BookDetailsDto addNewBook(BookDetailsDto bookDetails) {
+        Author author = authorRepo.findByName(bookDetails.getAuthor()).orElseThrow(() ->
+                new BadRequestException(String.format("Автора с именем '%s' не существует", bookDetails.getAuthor())));
+        List<String> genreNamesList = bookDetails.getGenres();
         List<Genre> genres = genreRepo.findByNameIn(genreNamesList);
 
         Book book = new Book(bookDetails.getName(), bookDetails.getReleaseYear(), genres, author);
         book = bookRepo.save(book);
-        return book.getId();
+        return BookDetailsDto.from(book);
     }
 
     @Override
     public void editBook(BookDetailsDto bookDetails) {
-        Author author = authorRepo.findByName(bookDetails.getAuthorName()).orElseThrow(() ->
-                new BadRequestException(String.format("Автора с именем '%s' не существует", bookDetails.getAuthorName())));
-        List<String> genreNamesList = List.of(bookDetails.getGenreNames().split(", "));
+        Author author = authorRepo.findByName(bookDetails.getAuthor()).orElseThrow(() ->
+                new BadRequestException(String.format("Автора с именем '%s' не существует", bookDetails.getAuthor())));
+        List<String> genreNamesList = bookDetails.getGenres();
         List<Genre> genres = genreRepo.findByNameIn(genreNamesList);
         Book book = bookRepo.findById(bookDetails.getId()).orElseThrow(() ->
                 new BadRequestException(String.format("Книги с id '%s' не существует", bookDetails.getId())));

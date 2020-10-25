@@ -10,6 +10,7 @@ import ru.otus.library.domain.Author;
 import ru.otus.library.domain.Book;
 import ru.otus.library.domain.Genre;
 import ru.otus.library.dto.BookDetailsDto;
+import ru.otus.library.dto.BookDto;
 import ru.otus.library.repository.AuthorRepository;
 import ru.otus.library.repository.BookRepository;
 import ru.otus.library.repository.GenreRepository;
@@ -18,8 +19,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -37,20 +38,21 @@ public class BookServiceImplTest {
 
     @Test
     void testListAllBooks() {
-        List<Book> expectedBooks = Arrays.asList(
-                new Book(-1L, "test book 1", 1945),
-                new Book(-2L, "test book 2", 1950));
-        doReturn(expectedBooks).when(bookRepo).findAll();
-        List<Book> actualBooks = service.listAllBooks();
-        assertIterableEquals(expectedBooks, actualBooks);
-    }
-
-    @Test
-    void testGetBook() {
-        Book book = new Book(-1L, "test book", 1945, null, null);
-        doReturn(Optional.of(book)).when(bookRepo).findById(anyLong());
-        Book actualBook = service.getBook(-1L);
-        assertEquals(book, actualBook);
+        Author author = new Author("test author", null);
+        List<Book> books = Arrays.asList(
+                new Book(-1L, "test book 1", 1945, null, author),
+                new Book(-2L, "test book 2", null, null, author));
+        doReturn(books).when(bookRepo).findAll();
+        List<BookDto> actualBooks = service.listAllBooks();
+        assertThat(actualBooks).hasSameSizeAs(books);
+        assertThat(actualBooks.get(0)).hasFieldOrPropertyWithValue("id", -1L)
+                .hasFieldOrPropertyWithValue("name", "test book 1")
+                .hasFieldOrPropertyWithValue("author", "test author")
+                .hasFieldOrPropertyWithValue("releaseYear", 1945);
+        assertThat(actualBooks.get(1)).hasFieldOrPropertyWithValue("id", -2L)
+                .hasFieldOrPropertyWithValue("name", "test book 2")
+                .hasFieldOrPropertyWithValue("author", "test author")
+                .hasFieldOrPropertyWithValue("releaseYear", null);
     }
 
     @Test
@@ -62,7 +64,7 @@ public class BookServiceImplTest {
         Book book = new Book(-1L, "test book", 1945, genres, author);
         doReturn(Optional.of(book)).when(bookRepo).findByIdWithDetails(anyLong());
         BookDetailsDto expectedBookDetails = new BookDetailsDto(-1L, "test book", "test author",
-                "test genre 1, test genre 2", 1945);
+                List.of("test genre 1", "test genre 2"), 1945);
         BookDetailsDto actualBookDetails = service.getBookDetails(-1L);
         assertEquals(expectedBookDetails, actualBookDetails);
     }
@@ -83,9 +85,14 @@ public class BookServiceImplTest {
         doReturn(book).when(bookRepo).save(any(Book.class));
 
         BookDetailsDto bookDetails = new BookDetailsDto(null, "test book", "test author",
-                "test genre 1, test genre 2", 1945);
-        long id = service.addNewBook(bookDetails);
-        assertEquals(-1L, id);
+                List.of("test genre 1", "test genre 2"), 1945);
+        BookDetailsDto newBookDetails = service.addNewBook(bookDetails);
+        assertThat(newBookDetails)
+                .hasFieldOrPropertyWithValue("id", -1L)
+                .hasFieldOrPropertyWithValue("name", bookDetails.getName())
+                .hasFieldOrPropertyWithValue("releaseYear", bookDetails.getReleaseYear())
+                .hasFieldOrPropertyWithValue("author", bookDetails.getAuthor())
+                .hasFieldOrPropertyWithValue("genres", bookDetails.getGenres());
     }
 
     @Test
@@ -105,7 +112,7 @@ public class BookServiceImplTest {
         doReturn(Optional.of(book)).when(bookRepo).findById(anyLong());
 
         BookDetailsDto bookDetails = new BookDetailsDto(-1L, "test book edited", "test author",
-                "test genre 1, test genre 2", 1946);
+                List.of("test genre 1", "test genre 2"), 1946);
         service.editBook(bookDetails);
         ArgumentCaptor<Book> bookCaptor = ArgumentCaptor.forClass(Book.class);
         verify(bookRepo).save(bookCaptor.capture());
