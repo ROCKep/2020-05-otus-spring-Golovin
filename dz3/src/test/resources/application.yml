@@ -1,0 +1,4 @@
+app:
+  path-to-file: /test-quiz-items.csv
+  min-correct-answers: 2
+  locale: en

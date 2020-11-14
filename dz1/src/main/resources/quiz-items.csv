@@ -1,0 +1,6 @@
+quizItem,answer0,answer1,answer2,correctNum
+"What is the size of byte variable?","8 bit","16 bit","32 bit",0
+What happens when thread's sleep() method is called?,Thread returns to the ready state,Thread returns to the waiting state,Thread starts running,1
+Which of the following is a thread safe?,StringBuilder,StringBuffer,Both of the above,1
+Method Overloading is an example of,Static Binding,Dynamic Binding,Both of the above,0
+Which of those allows duplicate elements?,Set,List,All,1

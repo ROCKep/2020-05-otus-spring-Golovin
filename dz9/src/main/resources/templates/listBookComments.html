@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <link rel="stylesheet" th:href="@{/static/vendor/bootstrap.min.css}"
+          href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+    <title>Комментарии</title>
+</head>
+<body>
+
+<div class="container">
+    <h1>Комментарии к книге "<span th:text="${book.name}">Книга 1</span>"</h1>
+    <p><a th:href="@{/books/{bookId}/comments/add(bookId=${book.id})}" href="addNewComment.html">Написать комментарий</a></p>
+    <div class="media" th:each="comment : ${comments}">
+        <div class="media-body">
+            <h4 class="media-heading" th:text="${comment.user}">Пользователь 1</h4>
+            <span th:text="${comment.content}">Комментарий 1</span>
+        </div>
+    </div>
+</div>
+
+<script th:src="@{/static/vendor/jquery-3.5.1.min.js}"
+        src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script th:src="@{/static/vendor/bootstrap.min.js}"
+        src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</body>
+</html>
