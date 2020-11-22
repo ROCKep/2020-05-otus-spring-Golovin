@@ -6,3 +6,10 @@ spring:
     generate-ddl: false
     hibernate:
       ddl-auto: none
+hystrix:
+  command:
+    default:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 3000
